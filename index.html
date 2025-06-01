@@ -1,399 +1,198 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>soat PRAEKT</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Budilnik</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    #time {
+      font-size: 5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-shadow: 0 3px 10px rgba(0,0,0,0.5);
+    }
+    .alarm-setter {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem 2rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    input[type="time"], select, input[type="file"] {
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      border: none;
+      font-size: 1.1rem;
+      outline: none;
+      background: #fff;
+      color: #333;
+    }
+    button {
+      background: #fff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      color: #764ba2;
+      box-shadow: 0 4px 15px rgba(255,255,255,0.4);
+    }
+    button:hover {
+      background-color: #e0d6f6;
+    }
+    .controls {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    @media (max-width: 600px) {
+      #time {
+        font-size: 3rem;
+      }
+      .alarm-setter {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div class="row justify-content-between align-items-center">
-                <div class="logo"><a href="index.html"><span class="logo-circle"></span> SOAT DOKON</a></div>
-                <ul class="menu">
-                    <li class="nav-item"><a href="#home" class="nav-link">Home</a></li>
-                    <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
-                    <li class="nav-item"><a href="#product" class="nav-link">Product</a></li>
-                    <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
-                </ul>
+  <h1>Budilnik</h1>
+  <div id="time">00:00:00</div>
+  <div class="alarm-setter">
+    <input type="time" id="alarmTime" />
+    <select id="alarmSoundSelect">
+      <option value="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">🔔 Ovoz 1</option>
+      <option value="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg">⏰ Ovoz 2</option>
+      <option value="https://actions.google.com/sounds/v1/alarms/beep_short.ogg">📢 Ovoz 3</option>
+      <option value="https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg">🎺 Ovoz 4</option>
+      <option value="https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg">🎶 Ovoz 5</option>
+      <option value="https://actions.google.com/sounds/v1/alarms/medium_bell_ring.ogg">🔔 Ovoz 6</option>
+      <option value="https://actions.google.com/sounds/v1/alarms/phone_alerts_and_ringtones.ogg">📱 Ovoz 7</option>
+      <option value="https://actions.google.com/sounds/v1/alarms/wake_up_alarm.ogg">☀️ Ovoz 8</option>
+      <option value="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg">🤣 Ovoz 9</option>
+      <option value="https://actions.google.com/sounds/v1/cartoon/cartoon_drip.ogg">💧 Ovoz 10</option>
+    </select>
+    <input type="file" id="customSound" accept="audio/*" />
+    <button id="setAlarmBtn">Budilnikni qo‘yish</button>
+  </div>
+  <div class="controls" style="display:none;">
+    <button id="stopAlarmBtn" disabled>To‘xtatish</button>
+    <button id="snoozeAlarmBtn" disabled>Kechiktirish</button>
+  </div>
+  <audio id="alarmSound" preload="auto"></audio>
+  <script>
+    const timeDisplay = document.getElementById('time');
+    const alarmSound = document.getElementById('alarmSound');
+    const setAlarmBtn = document.getElementById('setAlarmBtn');
+    const stopAlarmBtn = document.getElementById('stopAlarmBtn');
+    const snoozeAlarmBtn = document.getElementById('snoozeAlarmBtn');
+    const controls = document.querySelector('.controls');
+    const alarmInput = document.getElementById('alarmTime');
+    const alarmSoundSelect = document.getElementById('alarmSoundSelect');
+    const customSound = document.getElementById('customSound');
 
-                <div class="menu-btn">
-                    <i class="fa-solid fa-bars"></i>
-                </div>
-            </div>
-        </div>
-    </nav>
+    let alarmTime = null;
+    let isAlarmRinging = false;
+    let usingCustomSound = false;
 
-    <section class="home-section" id="home">
-        <div class="effect-wrap">
-            <div class="effect effect1"></div>
-            <div class="effect effect2">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-            <div class="effect effect3"></div>
-            <div class="effect effect4">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </div>
+    function updateTime() {
+      const now = new Date();
+      timeDisplay.textContent = now.toLocaleTimeString();
+      if(alarmTime && !isAlarmRinging) {
+        if(now.toTimeString().slice(0,5) === alarmTime) {
+          ringAlarm();
+        }
+      }
+    }
 
-        <div class="container">
-            <div class="row full-screen align-items-center">
-                <div class="home-text">
-                    <h2>YANGYOL <span>RAQAMLI SOAT</span> DOKONI</h2>
-                    <p>Tu nafislikni ilg'or texnologiyalar bilan uyg'unlashtirgan mukammal aksessuar. Bizning hashamatli soatlarimiz aqlli texnologiya, yuqori sifatli materiallar, ajoyib dizaynlar, cheklangan nashr va ko'p qirralilikni o'z ichiga oladi.</p>
-                    <a href="#" class="btn1">SOTIB OLISH</a>
-                </div>
-                
-                <div class="home-image">
-                    <div class="img-box">
-                        <img src="https://i.postimg.cc/tCt0D8wm/purple.png" alt="purple watch">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    function ringAlarm() {
+      isAlarmRinging = true;
+      if (usingCustomSound) {
+        const file = customSound.files[0];
+        if (file) {
+          const url = URL.createObjectURL(file);
+          alarmSound.src = url;
+        }
+      } else {
+        alarmSound.src = alarmSoundSelect.value;
+      }
+      alarmSound.loop = true;
+      alarmSound.play();
+      controls.style.display = 'flex';
+      stopAlarmBtn.disabled = false;
+      snoozeAlarmBtn.disabled = false;
+      alert('⏰ Budilnik vaqti keldi!');
+    }
 
-    <section class="about-section section-padding" id="about">
-        <div class="container">
-            <div class="row">
-                <div class="about-img">
-                    <div class="img-box">
-                        <img src="https://i.postimg.cc/5t0jYgz7/green.png" alt="green watch" id="main-watch">
-                    </div>
-                </div>
+    stopAlarmBtn.onclick = () => {
+      alarmSound.pause();
+      alarmSound.currentTime = 0;
+      isAlarmRinging = false;
+      alarmTime = null;
+      controls.style.display = 'none';
+      alarmInput.value = '';
+      alert('✅ Budilnik o‘chirildi.');
+    }
 
-                <div class="about-text">
-                    <div class="section-title">
-                        <h1 class="title">Mahsulot haqida</h1>
-                        <h2 class="subtitle">Ajoyib raqamli soat hayotingizni osonlashtirishi mumkin</h2>
-                    </div>
+    snoozeAlarmBtn.onclick = () => {
+      alarmSound.pause();
+      alarmSound.currentTime = 0;
+      isAlarmRinging = false;
+      let [hour, minute] = alarmTime.split(':').map(Number);
+      minute += 5;
+      if(minute >= 60) {
+        minute -= 60;
+        hour = (hour + 1) % 24;
+      }
+      alarmTime = `${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')}`;
+      alert(`🔁 5 daqiqaga kechiktirildi: ${alarmTime}`);
+      controls.style.display = 'none';
+      alarmInput.value = alarmTime;
+    }
 
-                    <div class="about-content">
-                        <p>Ish uchrashuvida qatnashasizmi yoki tungi dam olishni yaxshi ko'ryapsizmi, Bailo soatlari har qanday kiyimni to'ldirishi va nafislik qo'shishi mumkin.</p>
-                        <div class="color-container">
-                            <h3 class="title">Rangni tanlang</h3>
-                            <div class="colors">
-                                <span class="color blue"></span>
-                                <span class="color purple"></span>
-                                <span class="color cyan"></span>
-                                <span class="color pink"></span>
-                                <span class="color green active"></span>
-                                <span class="color red"></span>
-                            </div>
-                        </div>
+    setAlarmBtn.onclick = () => {
+      if(!alarmInput.value) {
+        alert('⚠️ Vaqt tanlang!');
+        return;
+      }
+      alarmTime = alarmInput.value;
+      usingCustomSound = customSound.files.length > 0;
+      alert(`⏱ Budilnik ${alarmTime} ga qo‘yildi.`);
+      controls.style.display = 'none';
+      isAlarmRinging = false;
+    }
 
-                        <div class="price">
-                            <h3 class="title">Tovar narxi</h3>
-                            <span class="new-price">$45.00</span>
-                            <span class="old-price">$56.99</span>
-                        </div>
-
-                        <a href="#" class="btn1">Hozir xarid qilish</a>
-                        <a href="#" class="configurate">
-                            <i class="fa-solid fa-circle-question"></i>
-                            Smart soatingizni qanday sozlash kerak
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="product-items section-padding" id="product">
-        <div class="container">
-            <div class="row">
-                <div class="section-title">
-                    <h1 class="title">Mahsulotlarimiz</h1>
-                    <h2 class="subtitle">Eng so'nggi mahsulotlarimiz</h2>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="product-item">
-                <div class="product-item-inner">
-                    <div class="card-img">
-                        <img src="https://i.postimg.cc/Wb7kdXzr/blue.png" alt="blue watch">
-                    </div>
-
-                    <div class="card-name">
-                        <p>Smart Bailo Watch</p>
-                    </div>
-
-                    <div class="card-prices">
-                        <a href="#" class="card-icon"><i class="fa-solid fa-heart"></i></a>
-
-                        <div>
-                            <span class="card-price card-price-before">$56.99</span>
-                            <span class="card-price card-price-now">$45.00</span>
-                        </div>
-
-                        <a href="#" class="card-icon"><i class="fa-solid fa-cart-plus"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-item">
-                <div class="product-item-inner">
-                    <div class="card-img">
-                        <img src="https://i.postimg.cc/5t0jYgz7/green.png" alt="blue watch">
-                    </div>
-
-                    <div class="card-name">
-                        <p>Smart Bailo Watch</p>
-                    </div>
-
-                    <div class="card-prices">
-                        <a href="#" class="card-icon"><i class="fa-solid fa-heart"></i></a>
-
-                        <div>
-                            <span class="card-price card-price-before">$56.99</span>
-                            <span class="card-price card-price-now">$45.00</span>
-                        </div>
-
-                        <a href="#" class="card-icon"><i class="fa-solid fa-cart-plus"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-item">
-                <div class="product-item-inner">
-                    <div class="card-img">
-                        <img src="https://i.postimg.cc/WbVZpQNT/pink.png" alt="blue watch">
-                    </div>
-
-                    <div class="card-name">
-                        <p>Smart Bailo Watch</p>
-                    </div>
-
-                    <div class="card-prices">
-                        <a href="#" class="card-icon"><i class="fa-solid fa-heart"></i></a>
-
-                        <div>
-                            <span class="card-price card-price-before">$56.99</span>
-                            <span class="card-price card-price-now">$45.00</span>
-                        </div>
-
-                        <a href="#" class="card-icon"><i class="fa-solid fa-cart-plus"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-item">
-                <div class="product-item-inner">
-                    <div class="card-img">
-                        <img src="https://i.postimg.cc/VkLbnn0h/red.png" alt="blue watch">
-                    </div>
-
-                    <div class="card-name">
-                        <p>Smart Bailo Watch</p>
-                    </div>
-
-                    <div class="card-prices">
-                        <a href="#" class="card-icon"><i class="fa-solid fa-heart"></i></a>
-
-                        <div>
-                            <span class="card-price card-price-before">$56.99</span>
-                            <span class="card-price card-price-now">$45.00</span>
-                        </div>
-
-                        <a href="#" class="card-icon"><i class="fa-solid fa-cart-plus"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-item">
-                <div class="product-item-inner">
-                    <div class="card-img">
-                        <img src="https://i.postimg.cc/pdrzbz2j/cyan.png" alt="blue watch">
-                    </div>
-
-                    <div class="card-name">
-                        <p>Smart Bailo Watch</p>
-                    </div>
-
-                    <div class="card-prices">
-                        <a href="#" class="card-icon"><i class="fa-solid fa-heart"></i></a>
-
-                        <div>
-                            <span class="card-price card-price-before">$56.99</span>
-                            <span class="card-price card-price-now">$45.00</span>
-                        </div>
-
-                        <a href="#" class="card-icon"><i class="fa-solid fa-cart-plus"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-item">
-                <div class="product-item-inner">
-                    <div class="card-img">
-                        <img src="https://i.postimg.cc/tCt0D8wm/purple.png" alt="blue watch">
-                    </div>
-
-                    <div class="card-name">
-                        <p>Smart Bailo Watch</p>
-                    </div>
-
-                    <div class="card-prices">
-                        <a href="#" class="card-icon"><i class="fa-solid fa-heart"></i></a>
-
-                        <div>
-                            <span class="card-price card-price-before">$56.99</span>
-                            <span class="card-price card-price-now">$45.00</span>
-                        </div>
-
-                        <a href="#" class="card-icon"><i class="fa-solid fa-cart-plus"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="contact-section section-padding" id="contact">
-        <div class="container">
-            <div class="row">
-                <div class="section-title">
-                    <h1 class="title">Contact Us</h1>
-                    <h2 class="subtitle">Get in Touch</h2>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="contact-info">
-                    <h3>For any queries and support</h3>
-                    <div class="contact-info-item">
-                        <i class="fa-solid fa-location-arrow"></i>
-                        <h4>Company Location</h4>
-                        <p>UZBEKISTAN TASHKENT</p>
-                    </div>
-
-                    <div class="contact-info-item">
-                        <i class="fa-solid fa-envelope"></i>
-                        <h4>Write to us at</h4>
-                        <p>b18921150@gmail.com</p>
-                    </div>
-
-                    <div class="contact-info-item">
-                        <i class="fa-solid fa-phone"></i>
-                        <h4>Call us on</h4>
-                        <p>+998 93 596 85 45</p>
-                    </div>
-                </div><div class="contact-form">
-    <form action="https://formspree.io/f/mzzgpljp" method="POST">
-        <div class="row">
-            <div class="left">
-                <div class="form-group">
-                    <input type="text" name="name" placeholder="Your Name" class="form-control" required>
-                </div>
-            </div>
-
-            <div class="right">
-                <div class="form-group">
-                    <input type="email" name="email" placeholder="Your Email" class="form-control" required>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="full-width">
-                <div class="form-group">
-                    <input type="text" name="phone" placeholder="Your Phone" class="form-control">
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="full-width">
-                <div class="form-group">
-                    <input type="text" name="subject" placeholder="Subject" class="form-control">
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="full-width">
-                <div class="form-group">
-                    <textarea name="message" cols="30" rows="10" placeholder="Your Message" class="form-control" required></textarea>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="full-width">
-                <button class="btn1" type="submit">Send Message</button>
-            </div>
-        </div>
-    </form>
-</div>
-</div>
-    </section>
-
-    <footer class="section-padding">
-        <div class="container">
-            <div class="row">
-                <div class="left-col">
-                    <div class="logo"><a href="index.html"><span class="logo-circle"></span> SOAT DOKON</a></div>
-                    <div class="social-media">
-                        <a href="#"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                        <a href="#"><i class="fa-brands fa-linkedin"></i></a>
-                    </div>
-                    <p class="left-text">&copy; 2025 MAQSADLAR SARI OLGA</p>
-                </div>
-
-                <div class="right-col">
-                    <h1>Our Newsletter</h1>
-                    <div class="border"></div>
-                    <p>EMAIL KIRITING</p>
-
-                    <form action="" class="newsletter-form">
-                        <input type="text" class="txtb" placeholder="Enter your email">
-                        <input type="submit" value="Submit" class="btn1">
-                    </form>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <script src="main.js"></script>
+    setInterval(updateTime, 1000);
+  </script>
 </body>
 </html>
+<head><link rel="manifest" href="manifest.json" />
+</head>
