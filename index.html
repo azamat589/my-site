@@ -3,397 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>soat PRAEKT</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="module">import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
+import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
+import { gsap } from "https://cdn.skypack.dev/gsap";
+
+const camera = new THREE.PerspectiveCamera(
+  10,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.z = 13;
+
+const scene = new THREE.Scene();
+let bee;
+let mixer;
+const loader = new GLTFLoader();
+
+// Fixed GLB URL - using raw.githubusercontent.com which serves with proper CORS headers
+loader.load(
+  "https://raw.githubusercontent.com/DennysDionigi/bee-glb/94253437c023643dd868592e11a0fd2c228cfe07/demon_bee_full_texture.glb",
+  function (gltf) {
+    bee = gltf.scene;
+    scene.add(bee);
+
+    mixer = new THREE.AnimationMixer(bee);
+    mixer.clipAction(gltf.animations[0]).play();
+    modelMove();
+  },
+  function (xhr) {
+    // Progress callback
+    console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+  },
+  function (error) {
+    // Error callback
+    console.error("Error loading model:", error);
+  }
+);
+
+const renderer = new THREE.WebGLRenderer({ alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.getElementById("container3D").appendChild(renderer.domElement);
+
+// light
+const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
+scene.add(ambientLight);
+
+const topLight = new THREE.DirectionalLight(0xffffff, 1);
+topLight.position.set(500, 500, 500);
+scene.add(topLight);
+
+const reRender3D = () => {
+  requestAnimationFrame(reRender3D);
+  renderer.render(scene, camera);
+  if (mixer) mixer.update(0.02);
+};
+reRender3D();
+
+let arrPositionModel = [
+  {
+    id: "banner",
+    position: { x: 0, y: -1, z: 0 },
+    rotation: { x: 0, y: 1.5, z: 0 }
+  },
+  {
+    id: "intro",
+    position: { x: 1, y: -1, z: -5 },
+    rotation: { x: 0.5, y: -0.5, z: 0.5 }
+  },
+  {
+    id: "description",
+    position: { x: -1, y: -1, z: -5 },
+    rotation: { x: 0, y: 0.5, z: 0.2 }
+  },
+  {
+    id: "contact",
+    position: { x: 0.45, y: -2, z: -10 },
+    rotation: { x: 0.2, y: -0.5, z: -0.2 }
+  }
+];
+
+const modelMove = () => {
+  const sections = document.querySelectorAll(".section");
+  let currentSection;
+  sections.forEach((section) => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top <= window.innerHeight / 3) {
+      currentSection = section.id;
+    }
+  });
+  let position_active = arrPositionModel.findIndex(
+    (val) => val.id == currentSection
+  );
+  if (position_active >= 0) {
+    let new_coordinates = arrPositionModel[position_active];
+    gsap.to(bee.position, {
+      x: new_coordinates.position.x,
+      y: new_coordinates.position.y,
+      z: new_coordinates.position.z,
+      duration: 3,
+      ease: "power1.out"
+    });
+    gsap.to(bee.rotation, {
+      x: new_coordinates.rotation.x,
+      y: new_coordinates.rotation.y,
+      z: new_coordinates.rotation.z,
+      duration: 3,
+      ease: "power1.out"
+    });
+  }
+};
+
+window.addEventListener("scroll", () => {
+  if (bee) {
+    modelMove();
+  }
+});
+
+window.addEventListener("resize", () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+});
+</script>
+<link rel="stylesheet" href="style.css">
+    <title>JUNIOR AZAM</title>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div class="row justify-content-between align-items-center">
-                <div class="logo"><a href="index.html"><span class="logo-circle"></span> Bailo</a></div>
-                <ul class="menu">
-                    <li class="nav-item"><a href="#home" class="nav-link">Home</a></li>
-                    <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
-                    <li class="nav-item"><a href="#product" class="nav-link">Product</a></li>
-                    <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
-                </ul>
-
-                <div class="menu-btn">
-                    <i class="fa-solid fa-bars"></i>
-                </div>
-            </div>
+    <header>
+        <div class="content-fit">
+          <div class="logo">ANIMATSIYA</div>
+          <nav>
+            <ul>
+              <li>Contacts</li>
+              <li>Category</li>
+              <li>KIRISH</li>
+            </ul>
+          </nav>
         </div>
-    </nav>
-
-    <section class="home-section" id="home">
-        <div class="effect-wrap">
-            <div class="effect effect1"></div>
-            <div class="effect effect2">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-            <div class="effect effect3"></div>
-            <div class="effect effect4">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
+      </header>
+      <div class="section" id="banner">
+        <div class="content-fit">
+          <div class="title" data-before="3D ANIMATION">YANGIYOL 3D</div>
         </div>
-
-        <div class="container">
-            <div class="row full-screen align-items-center">
-                <div class="home-text">
-                    <h2>YANGYOL <span>RAQAMLI SOAT</span> DOKONI</h2>
-                    <p>Tu nafislikni ilg'or texnologiyalar bilan uyg'unlashtirgan mukammal aksessuar. Bizning hashamatli soatlarimiz aqlli texnologiya, yuqori sifatli materiallar, ajoyib dizaynlar, cheklangan nashr va ko'p qirralilikni o'z ichiga oladi.</p>
-                    <a href="#" class="btn1">SOTIB OLISH</a>
-                </div>
-                
-                <div class="home-image">
-                    <div class="img-box">
-                        <img src="https://i.postimg.cc/tCt0D8wm/purple.png" alt="purple watch">
-                    </div>
-                </div>
-            </div>
+        <img src="https://assets.codepen.io/453571/flower.png" class="decorate" alt="" style="width: 50vw; bottom: 0; right: 0;">
+        <img src="https://assets.codepen.io/453571/leaf.png" class="decorate" alt="" style="width: 30vw; bottom: 0; left: 0;">
+      </div>
+      <div class="section" id="intro">
+        <div class="content-fit">
+          <div class="number">01</div>
+          <div class="des">
+            <div class="title">3d ANIMATSION ENG YAXSHISI</div>
+            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatibus voluptas a porro libero
+              recusandae quae, aut ratione, incidunt laborum, necessitatibus similique enim doloremque ex.
+              Laudantium obcaecati aspernatur doloremque illo beatae, maxime hic itaque consequatur nisi
+              accusantium veritatis, voluptatem ratione! Placeat numquam nisi reiciendis harum quibusdam tempore
+              eaque deleniti accusantium, veniam quae eos sed, asperiores laborum corporis odit mollitia
+              consequatur adipisci? Quibusdam quis eos debitis non esse blanditiis laudantium rerum odit tempora?
+              Corrupti maiores velit consequuntur cupiditate reiciendis similique provident repudiandae.</p>
+          </div>
         </div>
-    </section>
-
-    <section class="about-section section-padding" id="about">
-        <div class="container">
-            <div class="row">
-                <div class="about-img">
-                    <div class="img-box">
-                        <img src="https://i.postimg.cc/5t0jYgz7/green.png" alt="green watch" id="main-watch">
-                    </div>
-                </div>
-
-                <div class="about-text">
-                    <div class="section-title">
-                        <h1 class="title">Mahsulot haqida</h1>
-                        <h2 class="subtitle">Ajoyib raqamli soat hayotingizni osonlashtirishi mumkin</h2>
-                    </div>
-
-                    <div class="about-content">
-                        <p>Ish uchrashuvida qatnashasizmi yoki tungi dam olishni yaxshi ko'ryapsizmi, Bailo soatlari har qanday kiyimni to'ldirishi va nafislik qo'shishi mumkin.</p>
-                        <div class="color-container">
-                            <h3 class="title">Rangni tanlang</h3>
-                            <div class="colors">
-                                <span class="color blue"></span>
-                                <span class="color purple"></span>
-                                <span class="color cyan"></span>
-                                <span class="color pink"></span>
-                                <span class="color green active"></span>
-                                <span class="color red"></span>
-                            </div>
-                        </div>
-
-                        <div class="price">
-                            <h3 class="title">Tovar narxi</h3>
-                            <span class="new-price">$45.00</span>
-                            <span class="old-price">$56.99</span>
-                        </div>
-
-                        <a href="#" class="btn1">Hozir xarid qilish</a>
-                        <a href="#" class="configurate">
-                            <i class="fa-solid fa-circle-question"></i>
-                            Smart soatingizni qanday sozlash kerak
-                        </a>
-                    </div>
-                </div>
-            </div>
+      </div>
+      <div class="section" id="description">
+        <div class="content-fit">
+          <div class="number">02</div>
+          <div class="des">
+            <div class="title">FRONTEND DEVELOPER</div>
+            <p>UZBEKISTAN 15 AGE FRONTEND DEVELOPER .</p>
+          </div>
         </div>
-    </section>
-
-    <section class="product-items section-padding" id="product">
-        <div class="container">
-            <div class="row">
-                <div class="section-title">
-                    <h1 class="title">Mahsulotlarimiz</h1>
-                    <h2 class="subtitle">Eng so'nggi mahsulotlarimiz</h2>
-                </div>
-            </div>
+        <img src="https://assets.codepen.io/453571/leaf1.png" class="decorate" alt="" style="width: 70vw; bottom: 0; right: 0;">
+      </div>
+      <div class="section" id="contact">
+        <div class="content-fit">
+          <div class="number">03</div>
+          <div class="des">
+            <div class="title">CONTACT</div>
+            <table>
+              <tr>
+                <td>Email</td>
+                <td>b18921150@gmail.com</td>
+              </tr>
+              <tr>
+                <td>Phone</td>
+                <td>+998 93 596 85 45</td>
+              </tr>
+              <tr>
+                <td>Website</td>
+                <td>junior_azam</td>
+              </tr>
+              <tr>
+                <td>Youtube</td>
+                <td>@junior_azam</td>
+              </tr>
+            </table>
+            <div class="sign">JUNIOR AZAM</div>
+          </div>
         </div>
-
-        <div class="row">
-            <div class="product-item">
-                <div class="product-item-inner">
-                    <div class="card-img">
-                        <img src="https://i.postimg.cc/Wb7kdXzr/blue.png" alt="blue watch">
-                    </div>
-
-                    <div class="card-name">
-                        <p>Smart Bailo Watch</p>
-                    </div>
-
-                    <div class="card-prices">
-                        <a href="#" class="card-icon"><i class="fa-solid fa-heart"></i></a>
-
-                        <div>
-                            <span class="card-price card-price-before">$56.99</span>
-                            <span class="card-price card-price-now">$45.00</span>
-                        </div>
-
-                        <a href="#" class="card-icon"><i class="fa-solid fa-cart-plus"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-item">
-                <div class="product-item-inner">
-                    <div class="card-img">
-                        <img src="https://i.postimg.cc/5t0jYgz7/green.png" alt="blue watch">
-                    </div>
-
-                    <div class="card-name">
-                        <p>Smart Bailo Watch</p>
-                    </div>
-
-                    <div class="card-prices">
-                        <a href="#" class="card-icon"><i class="fa-solid fa-heart"></i></a>
-
-                        <div>
-                            <span class="card-price card-price-before">$56.99</span>
-                            <span class="card-price card-price-now">$45.00</span>
-                        </div>
-
-                        <a href="#" class="card-icon"><i class="fa-solid fa-cart-plus"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-item">
-                <div class="product-item-inner">
-                    <div class="card-img">
-                        <img src="https://i.postimg.cc/WbVZpQNT/pink.png" alt="blue watch">
-                    </div>
-
-                    <div class="card-name">
-                        <p>Smart Bailo Watch</p>
-                    </div>
-
-                    <div class="card-prices">
-                        <a href="#" class="card-icon"><i class="fa-solid fa-heart"></i></a>
-
-                        <div>
-                            <span class="card-price card-price-before">$56.99</span>
-                            <span class="card-price card-price-now">$45.00</span>
-                        </div>
-
-                        <a href="#" class="card-icon"><i class="fa-solid fa-cart-plus"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-item">
-                <div class="product-item-inner">
-                    <div class="card-img">
-                        <img src="https://i.postimg.cc/VkLbnn0h/red.png" alt="blue watch">
-                    </div>
-
-                    <div class="card-name">
-                        <p>Smart Bailo Watch</p>
-                    </div>
-
-                    <div class="card-prices">
-                        <a href="#" class="card-icon"><i class="fa-solid fa-heart"></i></a>
-
-                        <div>
-                            <span class="card-price card-price-before">$56.99</span>
-                            <span class="card-price card-price-now">$45.00</span>
-                        </div>
-
-                        <a href="#" class="card-icon"><i class="fa-solid fa-cart-plus"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-item">
-                <div class="product-item-inner">
-                    <div class="card-img">
-                        <img src="https://i.postimg.cc/pdrzbz2j/cyan.png" alt="blue watch">
-                    </div>
-
-                    <div class="card-name">
-                        <p>Smart Bailo Watch</p>
-                    </div>
-
-                    <div class="card-prices">
-                        <a href="#" class="card-icon"><i class="fa-solid fa-heart"></i></a>
-
-                        <div>
-                            <span class="card-price card-price-before">$56.99</span>
-                            <span class="card-price card-price-now">$45.00</span>
-                        </div>
-
-                        <a href="#" class="card-icon"><i class="fa-solid fa-cart-plus"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-item">
-                <div class="product-item-inner">
-                    <div class="card-img">
-                        <img src="https://i.postimg.cc/tCt0D8wm/purple.png" alt="blue watch">
-                    </div>
-
-                    <div class="card-name">
-                        <p>Smart Bailo Watch</p>
-                    </div>
-
-                    <div class="card-prices">
-                        <a href="#" class="card-icon"><i class="fa-solid fa-heart"></i></a>
-
-                        <div>
-                            <span class="card-price card-price-before">$56.99</span>
-                            <span class="card-price card-price-now">$45.00</span>
-                        </div>
-
-                        <a href="#" class="card-icon"><i class="fa-solid fa-cart-plus"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="contact-section section-padding" id="contact">
-        <div class="container">
-            <div class="row">
-                <div class="section-title">
-                    <h1 class="title">Contact Us</h1>
-                    <h2 class="subtitle">Get in Touch</h2>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="contact-info">
-                    <h3>For any queries and support</h3>
-                    <div class="contact-info-item">
-                        <i class="fa-solid fa-location-arrow"></i>
-                        <h4>Company Location</h4>
-                        <p>UZBEKISTAN TASHKENT</p>
-                    </div>
-
-                    <div class="contact-info-item">
-                        <i class="fa-solid fa-envelope"></i>
-                        <h4>Write to us at</h4>
-                        <p>b18921150@gmail.com</p>
-                    </div>
-
-                    <div class="contact-info-item">
-                        <i class="fa-solid fa-phone"></i>
-                        <h4>Call us on</h4>
-                        <p>+998 93 596 85 45</p>
-                    </div>
-                </div><div class="contact-form">
-    <form action="https://formspree.io/f/mzzgpljp" method="POST">
-        <div class="row">
-            <div class="left">
-                <div class="form-group">
-                    <input type="text" name="name" placeholder="Your Name" class="form-control" required>
-                </div>
-            </div>
-
-            <div class="right">
-                <div class="form-group">
-                    <input type="email" name="email" placeholder="Your Email" class="form-control" required>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="full-width">
-                <div class="form-group">
-                    <input type="text" name="phone" placeholder="Your Phone" class="form-control">
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="full-width">
-                <div class="form-group">
-                    <input type="text" name="subject" placeholder="Subject" class="form-control">
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="full-width">
-                <div class="form-group">
-                    <textarea name="message" cols="30" rows="10" placeholder="Your Message" class="form-control" required></textarea>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="full-width">
-                <button class="btn1" type="submit">Send Message</button>
-            </div>
-        </div>
-    </form>
-</div>
-</div>
-    </section>
-
-    <footer class="section-padding">
-        <div class="container">
-            <div class="row">
-                <div class="left-col">
-                    <div class="logo"><a href="index.html"><span class="logo-circle"></span> Bailo</a></div>
-                    <div class="social-media">
-                        <a href="#"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                        <a href="#"><i class="fa-brands fa-linkedin"></i></a>
-                    </div>
-                    <p class="left-text">&copy; 2025 Created by ULTRA CODE. All rights reserved</p>
-                </div>
-
-                <div class="right-col">
-                    <h1>Our Newsletter</h1>
-                    <div class="border"></div>
-                    <p>Enter your email to get our news and updates</p>
-
-                    <form action="" class="newsletter-form">
-                        <input type="text" class="txtb" placeholder="Enter your email">
-                        <input type="submit" value="Submit" class="btn1">
-                    </form>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <script src="main.js"></script>
+      </div>
+      <div id="container3D"></div>
 </body>
 </html>
